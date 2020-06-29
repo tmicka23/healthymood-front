@@ -24,17 +24,19 @@ function PrivateRoute ({ children, ...rest }) {
   return (
     <Route
       {...rest}
-      render={({ location }) =>
-        token ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: '/login',
-              state: { from: location }
-            }}
-          />
-      )} // eslint-disable-line
+      render={
+        ({ location }) =>
+          token ? (
+            children
+          ) : (
+            <Redirect
+              to={{
+                pathname: '/login',
+                state: { from: location }
+              }}
+            />
+          ) // eslint-disable-line
+      } // eslint-disable-line
     />
   );
 }
@@ -49,17 +51,18 @@ function App () {
   let userNameFromToken = null;
   if (token) {
     console.log(token);
-    userNameFromToken = jwtDecode(token).name || null;
+    userNameFromToken = jwtDecode(token).email || null;
   }
 
   return (
     <>
       <AuthContext.Provider value={{ token, setToken: setTokenInLocalStorage }}>
-        {userNameFromToken &&
+        {userNameFromToken && (
           <div>
             <p>Welcome back {userNameFromToken} !</p>
             <button onClick={() => setTokenInLocalStorage('')}>Log out</button>
-          </div>}
+          </div>
+        )}
         <Router>
           <div className='App'>
             <Header />
@@ -69,7 +72,11 @@ function App () {
               <Route exact path='/conseils-astuces' component={Article} />
               <Route exact path='/rechercher' component={Search} />
               <Route exact path='/recettes/:slug' component={Recipe} />
-              <Route exact path='/recettes/categorie/:id' component={RecipesPage} />
+              <Route
+                exact
+                path='/recettes/categorie/:id'
+                component={RecipesPage}
+              />
               <Route exact path='/login' component={LoginPage} />
               <Route exact path='/register' component={RegisterPage} />
               <PrivateRoute exact path='/secret'>
